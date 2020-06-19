@@ -1,17 +1,7 @@
 import React, { Component } from "react";
-import "./App.css";
-import styled from "styled-components";
-import Person from "./components/Person";
-
-const StyledButton = styled.button`
-background-color: ${props => props.alt ? "red" : "green"};
-color: white;
-cursor: pointer;
-
-&:hover {
-  background-color: ${props => props.alt ? "pink" : "lightgreen"};
-  color: black
-},`;
+import classes from "./App.module.css";
+import Persons from "../components/Persons/Persons";
+import Cockpit from "../components/Cockpit/Cockpit";
 
 class App extends Component {
   state = {
@@ -22,6 +12,7 @@ class App extends Component {
     ],
     otherstate: "this is another state",
     showPersons: false,
+    showUsers: true,
   };
 
   deleteNameHandler = (currentIndex) => {
@@ -59,40 +50,36 @@ class App extends Component {
 
   render() {
     let persons = null;
+
     if (this.state.showPersons) {
       persons = (
-        <div>
-          {this.state.persons.map((person, index) => {
-            return (
-              <Person
-                click={() => this.deleteNameHandler(index)}
-                name={person.name}
-                age={person.age}
-                key={person.id}
-                setNewName={(event) => this.setNewName(event, person.id)}
-              />
-            );
-          })}
-        </div>
+        <Persons
+          persons={this.state.persons}
+          deleteNameHandler={this.deleteNameHandler}
+          setNewName={this.setNewName}
+        />
       );
     }
 
-    const cssClass = [];
-    const numberOfPerson = this.state.persons.length;
-    if (numberOfPerson < 3) {
-      cssClass.push("red");
-    }
-    if (numberOfPerson < 2) {
-      cssClass.push("bold");
-    }
-
     return (
-      <div className="App">
-        <h1>Welcome to React App</h1>
-        <p className={cssClass.join(" ")}>Number of person status</p>
-        <StyledButton alt={this.state.showPersons} onClick={this.toggleShowPersons}>
-          Toggle Persons
-        </StyledButton>
+      <div className={classes.App}>
+        <button
+          onClick={() => {
+            this.setState({ showUsers: false });
+          }}
+        >
+          Remove Persons
+        </button>
+
+        {this.state.showUsers ? (
+          <Cockpit
+            title={this.props.title}
+            showPersons={this.state.showPersons}
+            numberOfPerson={this.state.persons.length}
+            toggleShowPersons={this.toggleShowPersons}
+            numberOfPerson={this.numberOfPerson}
+          />
+        ) : null}
         {persons}
       </div>
     );
