@@ -1,22 +1,43 @@
-import React from "react";
+import React, { Component } from "react";
 import classes from "./Person.module.css";
+import Aux from "../../../hoc/Aux";
+import withClass from "../../../hoc/withClass";
+import AuthContext from "../../../context/auth-context";
 
-const Person = (props) => {
-  // const rnd = Math.random();
+class Person extends Component {
+  constructor(props) {
+    super(props);
+    this.inputElementRef = React.createRef();
+  }
 
-  // if (rnd > 0.7) {
-  //   throw new Error("Something went wrong");
-  // }
+  static contextType = AuthContext;
 
-  return (
-    <div className={classes.Person}>
-      <p onClick={props.click}>
-        I am {props.name}, and I am {props.age} years old.
-      </p>
-      <p>{props.children}</p>
-      <input type="text" onChange={props.setNewName} value={props.name} />
-    </div>
-  );
-};
+  componentDidMount() {
+    this.inputElementRef.current.focus();
+    console.log(this.context.authenticated);
+  }
+  render() {
+    return (
+      <Aux>
+        {this.context.authenticated ? (
+          <p>Authenticated</p>
+        ) : (
+          <p>Please login</p>
+        )}
 
-export default Person;
+        <p onClick={this.props.click}>
+          I am {this.props.name}, and I am {this.props.age} years old.
+        </p>
+        <p>{this.props.children}</p>
+        <input
+          type="text"
+          ref={this.inputElementRef}
+          onChange={this.props.setNewName}
+          value={this.props.name}
+        />
+      </Aux>
+    );
+  }
+}
+
+export default withClass(Person, classes.Person);
